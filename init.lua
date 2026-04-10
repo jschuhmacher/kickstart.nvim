@@ -609,7 +609,7 @@ require('lazy').setup({
         clangd = {},
         -- gopls = {},
         ruff = {},
-        pyright = {},
+        ty = {},
         -- rust_analyzer = {},
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -660,6 +660,9 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         -- You can add other tools here that you want Mason to install
+        'starlark-rust',
+        'ty',
+        'clangd',
       })
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -879,7 +882,24 @@ require('lazy').setup({
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
       -- ensure basic parser are installed
-      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'cmake', 'starlark', 'cpp', 'python', 'tablegen' }
+      local parsers = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'cmake',
+        'starlark',
+        'cpp',
+        'python',
+        'tablegen',
+      }
       require('nvim-treesitter').install(parsers)
 
       ---@param buf integer
