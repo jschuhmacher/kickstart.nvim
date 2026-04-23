@@ -120,6 +120,16 @@ vim.o.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
+--  Over SSH there is no xclip/wl-copy to talk to; route through the terminal
+--  via OSC 52 so yanks/pastes hit the local machine's clipboard.
+if vim.env.SSH_TTY then
+  local osc52 = require 'vim.ui.clipboard.osc52'
+  vim.g.clipboard = {
+    name = 'OSC 52',
+    copy = { ['+'] = osc52.copy '+', ['*'] = osc52.copy '*' },
+    paste = { ['+'] = osc52.paste '+', ['*'] = osc52.paste '*' },
+  }
+end
 vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
 -- Enable break indent
@@ -771,6 +781,9 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
+        -- Tab: accept the current selection when the menu is open, otherwise
+        -- advance through a snippet expansion. Same chain 'super-tab' uses.
+        ['<Tab>'] = { 'select_and_accept', 'snippet_forward', 'fallback' },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
